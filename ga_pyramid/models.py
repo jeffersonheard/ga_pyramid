@@ -32,12 +32,12 @@ class Pyramid(Document):
     This drops all tile objects associated with the pyramid as well as the
     pyramid itself.
     """
-    name = StringField()
+    name = StringField(unique=True)
     tile_width = IntField()
     tile_height = IntField()
     srs = StringField()
     levels = IntField()
-    create_options = ListField(StringField())
+    create_options = DictField()
     pxsize_at_levels = ListField(FloatField())
     indices = ListField(StringField())
     data_type = IntField()
@@ -50,6 +50,10 @@ class Pyramid(Document):
     def drop(self):
         Tile.objects(pyramid=self).delete()
         self.delete(safe=True)
+
+    @property
+    def tiles(self):
+        return Tile.objects.filter(pyramid=self)
 
 class Tile(Document):
     """

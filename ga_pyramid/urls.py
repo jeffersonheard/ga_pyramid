@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import patterns, url
-from ga.ows.wms import WMS
+from ga_ows.views.wms import WMS
 from views import WMSAdapter
 from models import Pyramid
 

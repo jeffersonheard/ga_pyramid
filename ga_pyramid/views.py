@@ -1,4 +1,4 @@
-from ga.ows.wms import WMSAdapterBase
+from ga_ows.views.wms import WMSAdapterBase
 from django.http import HttpResponse
 from osgeo import ogr, gdal, osr
 from models import Pyramid, Tile
@@ -12,7 +12,7 @@ class WMSAdapter(WMSAdapterBase):
                          info_format, feature_count, exceptions, *args, **kwargs):
         pixel = self.get_2d_dataset(
             bbox=(wherex, wherey, wherex, wherey), 
-            width=1, height=1, query_layers=query_layers, styles=None)
+            width=1, height=1, query_layers=query_layers)
        
         arr = None
         if pixel:
@@ -21,7 +21,7 @@ class WMSAdapter(WMSAdapterBase):
         return HttpResponse(json.dumps(arr), mimetype='text/plain')
 
     def get_2d_dataset(self, bbox, width, height, query_layers, styles=None, **args):
-        pyramid = self.cls.objects(name=query_layers[0]).first()
+        pyramid = Pyramid.objects(name=query_layers[0]).first()
 
         # figure out the pixel size.  if we're only after one pixel, like for GetFeatureInfo,
         # it's likely that pxsize will be 0.  In that case, set the pixel size to be the 
@@ -39,7 +39,7 @@ class WMSAdapter(WMSAdapterBase):
 
         # see if we need to transform the dataset
         t_srs = osr.SpatialReference()
-        default_srid=srid=self.cls.objects(name=query_layers[0]).first().srs
+        default_srid=srid=Pyramid.objects(name=query_layers[0]).first().srs
 
         if 'proj' in args:
             t_srs.ImportFromProj4(args['proj'])
@@ -64,7 +64,7 @@ class WMSAdapter(WMSAdapterBase):
                 p = abs(px-pxsize)
         
         # open the index for that level, filter it by our bounding box.
-        dataset = ogr.Open(pyramid.indices[level].encode('ascii'))
+        dataset = ogr.Open(pyramid.indices[l].encode('ascii'))
         index = dataset.GetLayer(0)
         index.ResetReading()
         index.SetSpatialFilterRect(minx, miny, maxx, maxy)
@@ -73,7 +73,7 @@ class WMSAdapter(WMSAdapterBase):
         # retrieve tiles
         tiles = []
         while f:
-            t = Tile.objects(tile_name__endswith="{l}/{f}".format(l=level, f=f.location)).first()
+            t = Tile.objects(tile_name__endswith="{l}/{f}".format(l=l, f=f.location)).first()
             fl = gdal.FileFromMemBuffer('/vsimem/' + t.tile_name, t.data)
             tiles.append(gdal.Open('/vsimem/' + t.tile_name))
             f = index.GetNextFeature()
@@ -94,13 +94,13 @@ class WMSAdapter(WMSAdapterBase):
     def nativesrs(self, layer):
         return Pyramid.objects(name=layer).first().srs
 
-    def nativebbox(self,layer):
+    def nativebbox(self, layer):
         p = Pyramid.objects(name=layer).first()
         o = ogr.Open(p.indices[-1].encode('ascii'))
         l = o.GetLayer(0)
         minx,maxx,miny,maxy = l.GetExtent()
         del o
-        return (minx,miny,maxx,maxy)
+        return minx,miny,maxx,maxy
 
     def styles(self):
         return self.styles.keys()
