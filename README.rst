@@ -16,9 +16,9 @@ simple as running::
    $ cd ga_pyramid
    $ python setup.py install
 
-And then adding ``ga_ows`` and ``ga_pyramid`` to your list of
-:py:const:INSTALLED_APPS in :file:settings.py.  You will also need to add
-``ga_pyramid.urls`` to your base :file:urls.py file.
+And then adding ``ga_ows`` and ``ga_pyramid`` to your list of INSTALLED_APPS in
+settings.py.  You will also need to add ``ga_pyramid.urls`` to your base
+urls.py file.
 
 External Dependencies
 =====================
