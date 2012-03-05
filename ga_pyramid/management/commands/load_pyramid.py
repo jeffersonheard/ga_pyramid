@@ -25,7 +25,6 @@ class Command(BaseCommand):
         "CFloat64" : gdal.GDT_CFloat64
     }
 
-    
     args = '<name directrory_or_glob ...>'
     help = 'Loads a pyramid into the database'
     option_list = BaseCommand.option_list + (
@@ -117,7 +116,7 @@ class Command(BaseCommand):
                 levels=levels,
                 create_options = options,
                 pxsize_at_levels = [],
-                indices = [os.path.join(index_dir, '{name}_{level}.shp'.format(name=name, level=level)) for level in range(levels)],
+                indices = [os.path.join(index_dir, '{name}_{level}.shp'.format(name=name, level=level)) for level in range(levels+1)],
                 data_type = Command.DataTypes[options['data_type']],
                 raster_count = 0,
             )
@@ -152,6 +151,7 @@ class Command(BaseCommand):
                 tile_ds = gdal.Open(os.path.join(path, str(level), index.next().location))
                 xs, xw, _0, ys, _1, yw = tile_ds.GetGeoTransform()
                 pyramid.pxsize_at_levels.append(xw)
+                pyramid.raster_count = tile_ds.GetRasterCount()
 
                 index.ResetReading()
                 for tile in index:

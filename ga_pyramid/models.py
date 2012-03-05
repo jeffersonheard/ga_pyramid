@@ -7,6 +7,7 @@ want to use :file:`pyramid_loader.py`, which is similar to
 See ``pyramid_loader.py --help`` for more details.
 
 """
+from textwrap import dedent
 
 from mongoengine import *
 
@@ -55,6 +56,21 @@ class Pyramid(Document):
     def tiles(self):
         return Tile.objects.filter(pyramid=self)
 
+    def __str__(self):
+        return dedent("""Pyramid(
+            name={name},
+            dims={tile_width}x{tile_height},
+            levels={levels},
+            pxsize={pxsize}
+        {srs}""".format(
+            name=self.name,
+            tile_width=self.tile_width,
+            tile_height=self.tile_height,
+            levels = self.levels,
+            pxsize = self.pxsize_at_levels,
+            srs = self.srs
+        ))
+
 class Tile(Document):
     """
     Class that encapsulates tiles.  The most important field is "data".  This
@@ -101,4 +117,7 @@ class Tile(Document):
             ('pyramid', 'level', 'time', 'elevation')
         ]
     }
+
+    def __str__(self):
+        return """Tile(pyramid={pyramid}, level={level}, name={tile_name}""".format(pyramid=self.pyramid.name, level=self.level, tile_name=self.tile_name)
 
