@@ -151,7 +151,7 @@ class Command(BaseCommand):
                 tile_ds = gdal.Open(os.path.join(path, str(level), index.next().location))
                 xs, xw, _0, ys, _1, yw = tile_ds.GetGeoTransform()
                 pyramid.pxsize_at_levels.append(xw)
-                pyramid.raster_count = tile_ds.GetRasterCount()
+                pyramid.raster_count = tile_ds.RasterCount()
 
                 index.ResetReading()
                 for tile in index:
