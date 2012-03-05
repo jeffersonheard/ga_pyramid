@@ -107,13 +107,14 @@ class Tile(Document):
     data = BinaryField()
     time = DateTimeField()
     elevation = FloatField()
+    version = StringField()
 
     meta = {
         'indexes' : [
             'pyramid', 
             ('pyramid', 'level'), 
             ('pyramid', 'level', 'tile_name'), 
-            ('pyramid', 'level', 'time'), 
+            ('pyramid', 'level', 'time'),
             ('pyramid', 'level', 'time', 'elevation')
         ]
     }
