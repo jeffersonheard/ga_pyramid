@@ -9,5 +9,5 @@ from models import Pyramid
 
 urlpatterns = patterns('',
     # The following URL will expose a sample "Alert" model as a WMS service given the stylesheets in ss.py.  
-    url(r'^wms', WMS.as_view(adapter=WMSAdapter(cls=Pyramid, application='ga_pyramid', styles={}))),
+    url(r'^wms', WMS.as_view(adapter=WMSAdapter(styles={}))),
 )

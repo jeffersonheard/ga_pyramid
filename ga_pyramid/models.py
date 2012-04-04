@@ -34,6 +34,7 @@ class Pyramid(Document):
     pyramid itself.
     """
     name = StringField(unique=True)
+    title = StringField()
     tile_width = IntField()
     tile_height = IntField()
     srs = StringField()
