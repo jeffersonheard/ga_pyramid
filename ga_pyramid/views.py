@@ -148,7 +148,7 @@ class WMSAdapter(WMSAdapterBase):
         return self.cache.locate(**locator)
 
     def get_service_boundaries(self):
-        return self.nativebbox(Pyramid.objects.first().name)
+        return self.nativebbox()
 
     def get_layer_descriptions(self):
         ret = []
@@ -166,7 +166,7 @@ class WMSAdapter(WMSAdapterBase):
             layer['maxx'] = maxx
             layer['maxy'] = maxy
             s_srs = osr.SpatialReference()
-            s_srs.ImportFromEPSG(field.srid)
+            s_srs.ImportFromWkt(pyramid.srs)
             t_srs = osr.SpatialReference()
             t_srs.ImportFromEPSG(4326)
             crx = osr.CoordinateTransformation(s_srs, t_srs)
