@@ -18,7 +18,7 @@
 
 name = 'ga_pyramid'
 version = '0.01'
-packages = ['ga_pyramid']
+packages = ['ga_pyramid', 'ga_pyramid.management', 'ga_pyramid.management.commands']
 author = 'Jeff Heard'
 author_email = 'jeff@renci.org'
 description = 'Geoanalytics core data models: Pyramid'
